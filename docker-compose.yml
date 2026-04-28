@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  competitors-app:
+    # Construye la imagen usando el Dockerfile de este directorio
+    build: .
+
+    # Nombre del contenedor
+    container_name: competitors-app
+
+    # Mapea el puerto 8080 del contenedor al 8080 de tu máquina
+    ports:
+      - "8080:8080"
+
+    # Volumen para que la base de datos SQLite persista
+    # aunque el contenedor se reinicie o borre
+    volumes:
+      - db-data:/app/data
+
+    # Variables de entorno (sobreescriben application.properties)
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlite:/app/data/competitors.db
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+    # Reinicia automáticamente si el contenedor falla
+    restart: unless-stopped
+
+# Volumen nombrado: Docker lo gestiona y persiste en tu máquina
+volumes:
+  db-data:

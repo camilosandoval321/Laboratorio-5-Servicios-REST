@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Concurso</title>
+</head>
+<body>
+
+<h1>Registro de Competidor</h1>
+<p>¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a></p>
+
+<form id="registerForm">
+    <label>Nombre: <input type="text" id="name" required></label><br><br>
+    <label>Apellido: <input type="text" id="surname" required></label><br><br>
+    <label>Edad: <input type="number" id="age" min="1" required></label><br><br>
+    <label>Teléfono: <input type="text" id="telephone"></label><br><br>
+    <label>Celular: <input type="text" id="cellphone"></label><br><br>
+    <label>Dirección: <input type="text" id="address"></label><br><br>
+    <label>Ciudad: <input type="text" id="city"></label><br><br>
+    <label>País: <input type="text" id="country"></label><br><br>
+    <label>Email: <input type="email" id="email" required></label><br><br>
+    <label>Contraseña: <input type="password" id="password" required></label><br><br>
+
+    <button type="submit">Registrarse</button>
+</form>
+
+<br>
+<div id="resultado"></div>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const data = {
+            name:      document.getElementById('name').value,
+            surname:   document.getElementById('surname').value,
+            age:       parseInt(document.getElementById('age').value),
+            telephone: document.getElementById('telephone').value,
+            cellphone: document.getElementById('cellphone').value,
+            address:   document.getElementById('address').value,
+            city:      document.getElementById('city').value,
+            country:   document.getElementById('country').value,
+            email:     document.getElementById('email').value,
+            password:  document.getElementById('password').value
+        };
+
+        fetch('http://localhost:8080/competitors/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json().then(res => {
+                    document.getElementById('resultado').innerHTML =
+                        '<p style="color:green">' + res.message +
+                        ' (ID: ' + res.competitor_id + ')</p>';
+                    document.getElementById('registerForm').reset();
+                });
+            } else {
+                return response.json().then(err => {
+                    document.getElementById('resultado').innerHTML =
+                        '<p style="color:red">Error: ' + err.error + '</p>';
+                });
+            }
+        })
+        .catch(() => {
+            document.getElementById('resultado').innerHTML =
+                '<p style="color:red">No se pudo conectar al servidor.</p>';
+        });
+    });
+</script>
+
+</body>
+</html>
